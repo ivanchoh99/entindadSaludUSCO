@@ -11,7 +11,7 @@ import java.util.Set;
 public class Usuario {
     @Id
     @Column(unique = true, nullable = false)
-    private Integer documento;//Funciona como el username
+    private Long documento;//Funciona como el username
     @Column(nullable = false)
     private String password;
     @Column(nullable = false)
@@ -33,7 +33,7 @@ public class Usuario {
     //Constructors
 
 
-    public Usuario(Integer documento, String password, String nombre, String apellido, String direccion, Long celular) {
+    public Usuario(Long documento, String password, String nombre, String apellido, String direccion, Long celular) {
         this.documento = documento;
         this.password = password;
         this.nombre = nombre;
@@ -48,11 +48,11 @@ public class Usuario {
 
     //Getters and Setters
 
-    public Integer getDocumento() {
+    public Long getDocumento() {
         return documento;
     }
 
-    public void setDocumento(Integer documento) {
+    public void setDocumento(Long documento) {
         this.documento = documento;
     }
 

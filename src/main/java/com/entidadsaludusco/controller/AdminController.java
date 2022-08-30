@@ -10,6 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -58,20 +60,12 @@ public class AdminController {
         return mv;
     }
 
-    @GetMapping("viewCitas")
-    public ModelAndView citas() {
-        ModelAndView mv = new ModelAndView();
-        List<Cita> citas = citasService.findAll();
-        mv.addObject(citas);
-        return mv;
-    }
-
     @GetMapping("newConsultorio")
     public ModelAndView newConsultorio() {
         ModelAndView mv = new ModelAndView();
         List<Municipio> municipios = municipioService.lista();
         mv.addObject("municipios", municipios);
-        mv.setViewName("redirect:/newConsultorio");
+        mv.setViewName("Admin/newConsultorio");
         return mv;
     }
 
@@ -80,30 +74,74 @@ public class AdminController {
         return "Admin/newUser";
     }
 
-    @PostMapping("newCita/{documento}")
-    public ModelAndView creatCita(@PathVariable("documento") Integer documento) {
+
+    @GetMapping("newCita/{documento}")
+    public ModelAndView creatCita(@PathVariable("documento")Long documento) {
+
         ModelAndView mv = new ModelAndView();
+
         if (!usuarioService.existByDocumento(documento)) {
             mv.setViewName("redirect:/newUser");
         }
+
+        String citaFechas = LocalDateTime.now().plusDays(1).toString();
         Usuario paciente = usuarioService.getUsuario(documento);
         List<Usuario> medicos = usuarioService.findUsuariosByRolId(2);
         List<Consultorio> consultorios = consultorioService.getConsultorios();
 
-        mv.addObject(consultorios);
-        mv.addObject(paciente);
-        mv.addObject(medicos);
+        mv.addObject("citaFechas",citaFechas);
+        mv.addObject("consultorios",consultorios);
+        mv.addObject("paciente",paciente);
+        mv.addObject("medicos",medicos);
+        mv.setViewName("Admin/newCita");
+        return mv;
+    }
 
-        Cita cita = new Cita();
 
+    @PostMapping("creatConsultorio")
+    public ModelAndView creatConsultorio(@RequestParam Long municipio) {
+        ModelAndView mv = new ModelAndView();
+        Consultorio consultorio = new Consultorio();
+        Municipio getMunicipio = municipioService.getMunicipio(municipio);
+        consultorio.setMunicipio(getMunicipio);
+        consultorioService.save(consultorio);
+        mv.setViewName("redirect:/viewMedicos");
+        return mv;
+    }
 
+    @PostMapping("creatCita")
+    public ModelAndView creatCita(@RequestParam Long paciente,@RequestParam Long medico,@RequestParam Long consultorio,@RequestParam String fechaHora){
+        ModelAndView mv = new ModelAndView();
+
+        if (!usuarioService.existByDocumento(paciente)) {
+            mv.setViewName("redirect:/newUser");
+        }
+
+        Cita cita =new Cita();
+        LocalDateTime getFechaHora = LocalDateTime.parse(fechaHora);
+        Consultorio getConsultorio = consultorioService.getById(consultorio);
+        Usuario getMedico = usuarioService.getUsuario(medico);
+        Usuario getPaciente = usuarioService.getUsuario(paciente);
+        cita.setConsultorio(getConsultorio);
+        cita.setPaciente(getPaciente);
+        cita.setMedico(getMedico);
+        cita.setFechaHora(getFechaHora);
+
+        citasService.save(cita);
 
         mv.setViewName("redirect:/viewCitas");
         return mv;
     }
 
+    @GetMapping("deleteCita/{idCita}")
+    public String deleteCita(@PathVariable Long idCita){
+        citasService.delet(idCita);
+        return "redirect:/viewCitas";
+    }
+
+
     @PostMapping("creatUser")
-    public ModelAndView creatUser(@RequestParam Integer documento, @RequestParam String password,
+    public ModelAndView creatUser(@RequestParam Long documento, @RequestParam String password,
                                   @RequestParam String nombre, @RequestParam String apellido,
                                   @RequestParam String direccion, @RequestParam Long celular,
                                   @RequestParam Integer rol) {
@@ -139,12 +177,12 @@ public class AdminController {
         roles.add(rolUser);
         usuario.setRoles(roles);
         usuarioService.save(usuario);
-        mv.setViewName("Admin/viewMedicos");
+        mv.setViewName("redirect:/viewMedicos");
         return mv;
     }
 
     @GetMapping("edit/{documento}")
-    public ModelAndView edit(@PathVariable("documento") Integer documento) {
+    public ModelAndView edit(@PathVariable("documento") Long documento) {
         ModelAndView mv = new ModelAndView();
         if (!usuarioService.existByDocumento(documento)) {
             mv.setViewName("redirect:/viewMedicos");
@@ -157,7 +195,7 @@ public class AdminController {
     }
 
     @PostMapping("update")
-    public ModelAndView update(@RequestParam Integer documento,
+    public ModelAndView update(@RequestParam Long documento,
                                @RequestParam String direccion,
                                @RequestParam Long celular) {
 
@@ -188,18 +226,6 @@ public class AdminController {
     }
 
 
-
-
-    @PostMapping("creatConsultorio")
-    public ModelAndView creatConsultorio(@RequestParam Long municipio) {
-        ModelAndView mv = new ModelAndView();
-        Consultorio consultorio = new Consultorio();
-        Municipio getMunicipio = municipioService.getMunicipio(municipio);
-        consultorio.setMunicipio(getMunicipio);
-        consultorioService.save(consultorio);
-        mv.setViewName("redirect:/viewMedicos");
-        return new ModelAndView();
-    }
 }
 
 

@@ -8,7 +8,7 @@
 
 <div th:insert="fragments :: nav"></div>
 
-<div class="container w-80 m-auto">
+<div class="container m-auto">
   <div class="card my-3">
 
     <div class="card-body">
@@ -17,23 +17,29 @@
         <tr>
           <th scope="col">N Cita</th>
           <th scope="col">Consultorio</th>
+          <th scope="col">Fecha</th>
+          <th scope="col">Municipio</th>
           <th scope="col">Paciente</th>
           <th scope="col">Medico</th>
           <th scope="col">Recomendaciones</th>
           <th scope="col">Medicamentos</th>
+          <th scope="col">Eliminar</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="citas: ${citas}">
           <th th:text="${citas.id}"></th>
-          <th th:text="${citas.consultorio}"></th>
-          <th th:text="${citas.paciente}"></th>
-          <th th:text="${citas.medico}"></th>
-          <th><a class="btn btn-primary" th:href="@{medicamentos}">Medicamentos</a></th>
+          <th th:text="${citas.consultorio.id }"></th>
+          <th th:text="${citas.fechaHora }"></th>
+          <th th:text="${citas.consultorio.municipio.nombre}"></th>
+          <th th:text="${citas.paciente.nombre}+' '+${citas.paciente.apellido}"></th>
+          <th th:text="${citas.medico.nombre}+' '+${citas.medico.nombre}"></th>
+          <th><a class="btn btn-primary" th:href="@{/recomendacion}">Recomendacion</a></th>
+          <th><a class="btn btn-primary" th:href="@{/medicamentos}">Medicamentos</a></th>
+          <th sec:authorize="hasAuthority('ADMIN')"><a th:href="@{'/deleteCita/'+${citas.id}}" class="btn btn-danger">Cancelar</a></th>
         </tr>
         </tbody>
       </table>
-      <a th:href="@{'/newUser'}" class="btn btn-success"> Crear Nuevo</a>
     </div>
   </div>
 </div>

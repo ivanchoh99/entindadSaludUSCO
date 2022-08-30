@@ -1,6 +1,8 @@
 package com.entidadsaludusco.models.entity;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Set;
 
 @Entity
@@ -9,8 +11,11 @@ public class Cita {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne
+    @ManyToOne
     private Consultorio consultorio;
+
+    private LocalDateTime fechaHora;
+
     @OneToOne
     private Usuario medico;
     @OneToOne
@@ -24,12 +29,11 @@ public class Cita {
     inverseJoinColumns=@JoinColumn(name="mediacamento_id"))
     private Set<Medicamentos> medicamentos;
 
-    public Cita(Consultorio consultorio, Usuario medico, Usuario paciente, String recomendaciones, Set<Medicamentos> medicamentos) {
+    public Cita(Consultorio consultorio, Usuario medico, Usuario paciente, LocalDateTime fechaHora) {
         this.consultorio = consultorio;
         this.medico = medico;
         this.paciente = paciente;
-        this.recomendaciones = recomendaciones;
-        this.medicamentos = medicamentos;
+        this.fechaHora = fechaHora;
     }
 
     public Cita() {
@@ -81,5 +85,13 @@ public class Cita {
 
     public void setMedicamentos(Set<Medicamentos> medicamentos) {
         this.medicamentos = medicamentos;
+    }
+
+    public LocalDateTime getFechaHora() {
+        return fechaHora;
+    }
+
+    public void setFechaHora(LocalDateTime fechaHora) {
+        this.fechaHora = fechaHora;
     }
 }

@@ -16,5 +16,8 @@ public class ConsultorioService {
     public List<Consultorio> getConsultorios(){
         return consultorioRepository.findAll();
     }
+    public Consultorio getById(Long id){
+        return consultorioRepository.getById(id);
+    }
     public void save(Consultorio consultorio){ consultorioRepository.save(consultorio);}
 }

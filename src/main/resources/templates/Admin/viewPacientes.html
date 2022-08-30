@@ -38,8 +38,8 @@
                         <th th:text="${usuariosPacientes.apellido}"></th>
                         <th th:text="${usuariosPacientes.direccion}"></th>
                         <th th:text="${usuariosPacientes.celular}"></th>
-                        <th><a class="btn btn-primary" th:href="@{'edit/'+ ${usuariosPacientes.documento}}">Editar</a></th>
-                        <th><a class="btn btn-warning" th:href="@{'nuevaCita/'+ ${usuariosPacientes.documento}}">Agendar</a></th>
+                        <th><a class="btn btn-primary" th:href="@{'edit/'+${usuariosPacientes.documento}}">Editar</a></th>
+                        <th><a class="btn btn-warning" th:href="@{'newCita/'+${usuariosPacientes.documento}}">Agendar</a></th>
                     </tr>
                     </tbody>
                 </table>

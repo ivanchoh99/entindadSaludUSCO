@@ -20,31 +20,37 @@
 
           <div class="my-3">
             <label class="form-label" for="paciente">Pacientes</label><br>
-            <input required readonly name="pacientes" id="paciente" list="paciente" th:text="${paciente.nombre}" th:value="${paciente.id}" >
+            <input class="form-control-plaintext" readonly name="paciente" id="paciente" th:text="${paciente.nombre}+' '+${paciente.apellido} " th:value="${paciente.documento}" >
           </div>
 
           <div class="my-3">
-            <label class="form-label" for="pacientes">Municipios</label><br>
-            <input required name="medico" id="medico" list="medicos" >
+            <label class="form-label" for="medico">Medico</label><br>
+            <input  class="form-control" required name="medico" id="medico" list="medicos">
 
 
             <datalist id="medicos">
-              <option th:each="medicos: ${medicos}" th:text="${medicos.nombre}" th:value="${medicos.id}"></option>
+              <option th:each="medicos: ${medicos}" th:text="${medicos.nombre} +' '+ ${medicos.apellido}" th:value="${medicos.documento}"></option>
             </datalist>
           </div>
 
           <div class="my-3">
-            <label class="form-label" for="consultorio">Consultorios</label><br>
-            <input required name="medico" id="consultorio" list="consultorios" >
+            <label class="form-label" for="consultorio">Consultorio</label><br>
+            <input  class="form-control" required name="consultorio" id="consultorio" list="consultorios" >
 
 
             <datalist id="consultorios">
-              <option th:each="medicos: ${medicos}" th:text="${medicos.nombre}" th:value="${medicos.id}"></option>
+              <option th:each="consultorios: ${consultorios}" th:text="${consultorios.municipio.nombre}" th:value="${consultorios.id}"></option>
             </datalist>
           </div>
 
-          <button type="submit" class="btn btn-success btn-block" >Crear Consultorio</button>
-          <a class="btn btn-primary btn-block" th:href="@{/viewCitas}">Regresar</a>
+          <div class="mb-3">
+            <label for="fechaHora">Fecha</label>
+            <input required type="datetime-local" id="fechaHora"
+                   name="fechaHora" th:value="${citaFechas}">
+          </div>
+
+            <button type="submit" class="btn btn-success btn-block" >Crear</button>
+            <a class="btn btn-primary btn-block" th:href="@{/viewCitas}">Regresar</a>
 
         </form>
       </div>

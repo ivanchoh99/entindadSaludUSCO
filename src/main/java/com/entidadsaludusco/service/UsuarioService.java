@@ -23,10 +23,10 @@ public class UsuarioService {
         return usuarioRepository.findAll();
     }
 
-    public Usuario getUsuario(Integer documento){
+    public Usuario getUsuario(Long documento){
         return usuarioRepository.findByDocumento(documento);
     }
-    public boolean existByDocumento(Integer documento){
+    public boolean existByDocumento(Long documento){
         return usuarioRepository.existsByDocumento(documento);
     }
     public void save(Usuario usuario){usuarioRepository.save(usuario);}

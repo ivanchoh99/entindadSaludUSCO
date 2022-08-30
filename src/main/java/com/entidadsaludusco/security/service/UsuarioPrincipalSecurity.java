@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class UsuarioPrincipalSecurity implements UserDetails {
 
 
-    private Integer documento;//Funciona como el username
+    private Long documento;//Funciona como el username
     private String password;
 
     private String nombre;
@@ -21,7 +21,7 @@ public class UsuarioPrincipalSecurity implements UserDetails {
     private Long celular;
     private Collection<? extends GrantedAuthority> authoritie;
 
-    public UsuarioPrincipalSecurity(Integer documento, String password, String nombre, String apellido, String sireccion, Long celular, Collection<?extends GrantedAuthority> authoritie) {
+    public UsuarioPrincipalSecurity(Long documento, String password, String nombre, String apellido, String sireccion, Long celular, Collection<?extends GrantedAuthority> authoritie) {
         this.documento = documento;
         this.password = password;
         this.nombre = nombre;
