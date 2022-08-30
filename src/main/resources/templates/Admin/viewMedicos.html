@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:insert="fragments :: head">
+    <title>ADMIN</title>
+</head>
+<body >
+
+<div th:insert="fragments :: nav"></div>
+
+<div class="container w-80 m-auto">
+    <div class="card my-3">
+            <ul class="nav nav-pills nav-fill">
+                <li class="nav-item p-3">
+                    <a class="nav-link active" aria-current="page" th:href="@{/viewMedicos}">Medicos</a>
+                </li>
+                <li class="nav-item p-3">
+                    <a class="nav-link"  th:href="@{/viewPacientes}">Pacientes</a>
+                </li>
+
+            </ul>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th scope="col">Documento</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Apellido</th>
+                            <th scope="col">Direccion</th>
+                            <th scope="col">Celular</th>
+                            <th scope="col">Editar</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="usuariosMedicos: ${usuariosMedicos}">
+                            <th th:text="${usuariosMedicos.documento}"></th>
+                            <th th:text="${usuariosMedicos.nombre}"></th>
+                            <th th:text="${usuariosMedicos.apellido}"></th>
+                            <th th:text="${usuariosMedicos.direccion}"></th>
+                            <th th:text="${usuariosMedicos.celular}"></th>
+                            <th><a class="btn btn-primary" th:href="@{'edit/'+ ${usuariosMedicos.documento}}">Editar</a></th>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <a th:href="@{/newUser}" class="btn btn-success"> Crear Usuario</a>
+                    <a th:href="@{/newConsultorio}" class="btn btn-success"> Crear Consultorio</a>
+                </div>
+            </div>
+        </div>
+
+    <div th:insert="fragments :: scripts"></div>
+</body>
+</html>

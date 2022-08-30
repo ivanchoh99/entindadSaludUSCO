@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:insert="fragments :: head">
+  <title>ADMIN New Consultorio</title>
+</head>
+
+<div th:insert="fragments :: nav"></div>
+
+<body class="vh-100">
+
+<div class="container d-flex h-100 m-auto justify-content-center align-items-center">
+
+  <div class="card w-50">
+    <div class="card-header">
+      <h5 class="card-title">Nuevo Consultorio</h5>
+    </div>
+      <div class="card-body">
+        <form class=" m-auto w-50" th:action="@{/creatConsultorio}" method="post">
+
+          <div class="my-3">
+            <label class="form-label" for="municipio">Municipios</label><br>
+            <input name="municipio" id="municipio" list="municipios" >
+
+
+            <datalist id="municipios">
+              <option th:each="municipios: ${municipios}" th:text="${municipios.nombre}" th:value="${municipios.id}"></option>
+            </datalist>
+          </div>
+
+
+          <button type="submit" class="btn btn-success btn-block" >Crear Consultorio</button>
+          <a class="btn btn-primary btn-block" th:href="@{/viewMedicos}">Regresar</a>
+
+        </form>
+      </div>
+    </div>
+  </div>
+<div th:insert="fragments :: scripts"></div>
+</body>
+</html>

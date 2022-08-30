@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:insert="fragments :: head">
+    <title>Login</title>
+</head>
+<body>
+
+<div class="vh-100 d-flex justify-content-center align-items-center">
+
+
+    <div sec:authorize="isAuthenticated()" class="alert alert-success" role="alert">
+        <h3 class="alert-heading">Bien echo!</h3>
+        <p>Ya has ingresado con un perfil </p>
+        <a class="btn btn-primary" th:href="@{/index}">HOME</a>
+    </div>
+
+    <form th:action="@{/login}" method="post" sec:authorize="!isAuthenticated()" class="w-25">
+        <div class="mb-3">
+            <label for="documento" class="form-label">N Documento</label>
+            <input type="number" class="form-control" id="documento" name="documento" required autocomplete="off">
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Contraseña</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+        </div>
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="checkRememberMe" name="checkRememberMe">
+            <label class="form-check-label" for="checkRememberMe">Remember me</label>
+        </div>
+        <button th:href="@{/index}" type="submit" class="btn btn-primary">Ingresar</button>
+    </form>
+</div>
+
+<div th:insert="fragments :: scripts"></div>
+</body>
+</html>

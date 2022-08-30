@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:insert="fragments :: head">
+  <title>ADMIN</title>
+</head>
+<body >
+
+<div th:insert="fragments :: nav"></div>
+
+<div class="container w-80 m-auto">
+  <div class="card my-3">
+
+    <div class="card-body">
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th scope="col">N Cita</th>
+          <th scope="col">Consultorio</th>
+          <th scope="col">Paciente</th>
+          <th scope="col">Medico</th>
+          <th scope="col">Recomendaciones</th>
+          <th scope="col">Medicamentos</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="citas: ${citas}">
+          <th th:text="${citas.id}"></th>
+          <th th:text="${citas.consultorio}"></th>
+          <th th:text="${citas.paciente}"></th>
+          <th th:text="${citas.medico}"></th>
+          <th><a class="btn btn-primary" th:href="@{medicamentos}">Medicamentos</a></th>
+        </tr>
+        </tbody>
+      </table>
+      <a th:href="@{'/newUser'}" class="btn btn-success"> Crear Nuevo</a>
+    </div>
+  </div>
+</div>
+
+<div th:insert="fragments :: scripts"></div>
+</body>
+</html>

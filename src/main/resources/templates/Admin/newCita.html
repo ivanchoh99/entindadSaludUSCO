@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:insert="fragments :: head">
+  <title>ADMIN New Consultorio</title>
+</head>
+
+<div th:insert="fragments :: nav"></div>
+
+<body class="vh-100">
+
+<div class="container d-flex h-100 m-auto justify-content-center align-items-center">
+
+  <div class="card w-50">
+    <div class="card-header">
+      <h5 class="card-title">Nuevo Consultorio</h5>
+    </div>
+      <div class="card-body">
+        <form class=" m-auto w-50" th:action="@{/creatCita}" method="post">
+
+          <div class="my-3">
+            <label class="form-label" for="paciente">Pacientes</label><br>
+            <input required readonly name="pacientes" id="paciente" list="paciente" th:text="${paciente.nombre}" th:value="${paciente.id}" >
+          </div>
+
+          <div class="my-3">
+            <label class="form-label" for="pacientes">Municipios</label><br>
+            <input required name="medico" id="medico" list="medicos" >
+
+
+            <datalist id="medicos">
+              <option th:each="medicos: ${medicos}" th:text="${medicos.nombre}" th:value="${medicos.id}"></option>
+            </datalist>
+          </div>
+
+          <div class="my-3">
+            <label class="form-label" for="consultorio">Consultorios</label><br>
+            <input required name="medico" id="consultorio" list="consultorios" >
+
+
+            <datalist id="consultorios">
+              <option th:each="medicos: ${medicos}" th:text="${medicos.nombre}" th:value="${medicos.id}"></option>
+            </datalist>
+          </div>
+
+          <button type="submit" class="btn btn-success btn-block" >Crear Consultorio</button>
+          <a class="btn btn-primary btn-block" th:href="@{/viewCitas}">Regresar</a>
+
+        </form>
+      </div>
+    </div>
+  </div>
+<div th:insert="fragments :: scripts"></div>
+</body>
+</html>
