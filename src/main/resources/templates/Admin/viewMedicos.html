@@ -4,50 +4,76 @@
 <head th:insert="fragments :: head">
     <title>ADMIN</title>
 </head>
-<body >
+<body class="vh-100" style="background-color: grey;">
 
-<div th:insert="fragments :: nav"></div>
 
-<div class="container w-80 m-auto">
-    <div class="card my-3">
-            <ul class="nav nav-pills nav-fill">
-                <li class="nav-item p-3">
-                    <a class="nav-link active" aria-current="page" th:href="@{/viewMedicos}">Medicos</a>
+<nav class="navbar navbar-dark navbar-expand-lg bg-dark"  style="height: 10vh; position: sticky; top: 0">
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/index}">USCO Salud</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link " aria-current="page" th:href="@{/index}">HOME</a>
                 </li>
-                <li class="nav-item p-3">
-                    <a class="nav-link"  th:href="@{/viewPacientes}">Pacientes</a>
+                <li class="nav-item" sec:authorize="hasAuthority('ADMIN')">
+                    <a class="nav-link active" th:href="@{/viewMedicos}">Listas</a>
                 </li>
-
+                <li class="nav-item" sec:authorize="hasAnyAuthority('ADMIN','MEDICO','PACIENTE')">
+                    <a class="nav-link" th:href="@{/viewCitas}">Citas</a>
+                </li>
             </ul>
-                <div class="card-body">
-                    <table class="table table-striped">
-                        <thead>
-                        <tr>
-                            <th scope="col">Documento</th>
-                            <th scope="col">Nombre</th>
-                            <th scope="col">Apellido</th>
-                            <th scope="col">Direccion</th>
-                            <th scope="col">Celular</th>
-                            <th scope="col">Editar</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="usuariosMedicos: ${usuariosMedicos}">
-                            <th th:text="${usuariosMedicos.documento}"></th>
-                            <th th:text="${usuariosMedicos.nombre}"></th>
-                            <th th:text="${usuariosMedicos.apellido}"></th>
-                            <th th:text="${usuariosMedicos.direccion}"></th>
-                            <th th:text="${usuariosMedicos.celular}"></th>
-                            <th><a class="btn btn-primary" th:href="@{'edit/'+ ${usuariosMedicos.documento}}">Editar</a></th>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <a th:href="@{/newUser}" class="btn btn-success"> Crear Usuario</a>
-                    <a th:href="@{/newConsultorio}" class="btn btn-success"> Crear Consultorio</a>
+            <a th:href="@{/login}" sec:authorize="!isAuthenticated()">
+                Iniciar Sesión
+            </a>
+            <form class="d-flex" role="search"  sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post">
+                <button class="btn btn-outline-danger" type="submit">Salir</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+    <div class="d-flex justify-content-center align-items-center" style="height: 90vh">
+        <div class="card m-3 ">
+                <ul class="nav nav-pills nav-fill">
+                    <li class="nav-item p-3">
+                        <a class="nav-link active"  aria-current="page" th:href="@{/viewMedicos}">Medicos</a>
+                    </li>
+                    <li class="nav-item p-3">
+                        <a class="nav-link"  th:href="@{/viewPacientes}">Pacientes</a>
+                    </li>
+
+                </ul>
+                    <div class="card-body">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th scope="col">Documento</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Apellido</th>
+                                <th scope="col">Direccion</th>
+                                <th scope="col">Celular</th>
+                                <th scope="col">Editar</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="usuariosMedicos: ${usuariosMedicos}">
+                                <th th:text="${usuariosMedicos.documento}"></th>
+                                <th th:text="${usuariosMedicos.nombre}"></th>
+                                <th th:text="${usuariosMedicos.apellido}"></th>
+                                <th th:text="${usuariosMedicos.direccion}"></th>
+                                <th th:text="${usuariosMedicos.celular}"></th>
+                                <th><a class="btn btn-primary" th:href="@{'edit/'+ ${usuariosMedicos.documento}}">Editar</a></th>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <a th:href="@{/newUser}" class="btn btn-success"> Crear Usuario</a>
+                        <a th:href="@{/newConsultorio}" class="btn btn-success"> Crear Consultorio</a>
+                    </div>
                 </div>
             </div>
-        </div>
-
     <div th:insert="fragments :: scripts"></div>
 </body>
 </html>

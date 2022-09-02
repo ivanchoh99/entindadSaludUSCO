@@ -5,26 +5,59 @@
   <title>ADMIN New Consultorio</title>
 </head>
 
-<div th:insert="fragments :: nav"></div>
 
-<body class="vh-100">
+<body class="vh-100" style="background-color: grey">
 
-<div class="container d-flex h-100 m-auto justify-content-center align-items-center">
+<nav class="navbar navbar-dark navbar-expand-lg bg-dark"  style="height: 10vh; position: sticky; top: 0">
+  <div class="container-fluid">
+    <a class="navbar-brand" th:href="@{/index}">USCO Salud</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link " aria-current="page" th:href="@{/index}">HOME</a>
+        </li>
+        <li class="nav-item" sec:authorize="hasAuthority('ADMIN')">
+          <a class="nav-link active" th:href="@{/viewMedicos}">Listas</a>
+        </li>
+        <li class="nav-item" sec:authorize="hasAnyAuthority('ADMIN','MEDICO','PACIENTE')">
+          <a class="nav-link" th:href="@{/viewCitas}">Citas</a>
+        </li>
+      </ul>
+      <a th:href="@{/login}" sec:authorize="!isAuthenticated()">
+        Iniciar Sesión
+      </a>
+      <form class="d-flex" role="search"  sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post">
+        <button class="btn btn-outline-danger" type="submit">Salir</button>
+      </form>
+    </div>
+  </div>
+</nav>
+
+
+<div class="d-flex justify-content-center align-items-center" style="height: 90vh">
 
   <div class="card w-50">
     <div class="card-header">
-      <h5 class="card-title">Nuevo Consultorio</h5>
+      <h5 class="card-title fw-bold">Nuevo Cita</h5>
     </div>
       <div class="card-body">
         <form class=" m-auto w-50" th:action="@{/creatCita}" method="post">
 
           <div class="my-3">
-            <label class="form-label" for="paciente">Pacientes</label><br>
-            <input class="form-control-plaintext" readonly name="paciente" id="paciente" th:text="${paciente.nombre}+' '+${paciente.apellido} " th:value="${paciente.documento}" >
+            <label class="form-label fw-bold" for="paciente">N Documento</label><br>
+            <input class="form-control-plaintext" readonly name="paciente" id="paciente" th:value=" ${paciente.documento}" >
           </div>
 
           <div class="my-3">
-            <label class="form-label" for="medico">Medico</label><br>
+            <label class="form-label fw-bold" for="paciente_nombre">Nombre Completo</label><br>
+            <p class="form-control-plaintext" readonly id="paciente_nombre" th:text="  ${paciente.nombre}+' '+${paciente.apellido}"></p>
+          </div>
+
+          <div class="my-3">
+            <label class="form-label fw-bold" for="medico">Medico</label><br>
             <input  class="form-control" required name="medico" id="medico" list="medicos">
 
 
@@ -34,9 +67,8 @@
           </div>
 
           <div class="my-3">
-            <label class="form-label" for="consultorio">Consultorio</label><br>
+            <label class="form-label fw-bold" for="consultorio">Consultorio</label><br>
             <input  class="form-control" required name="consultorio" id="consultorio" list="consultorios" >
-
 
             <datalist id="consultorios">
               <option th:each="consultorios: ${consultorios}" th:text="${consultorios.municipio.nombre}" th:value="${consultorios.id}"></option>
@@ -44,13 +76,22 @@
           </div>
 
           <div class="mb-3">
-            <label for="fechaHora">Fecha</label>
+            <label class="form-label fw-bold" for="fechaHora">Fecha</label>
             <input required type="datetime-local" id="fechaHora"
-                   name="fechaHora" th:value="${citaFechas}">
+                   name="fechaHora" th:value="${citaFechas}"
+                    th:min="${fechaMin}">
           </div>
 
             <button type="submit" class="btn btn-success btn-block" >Crear</button>
-            <a class="btn btn-primary btn-block" th:href="@{/viewCitas}">Regresar</a>
+            <a class="btn btn-primary btn-block" th:href="@{/viewPacientes}">Regresar</a>
+
+          <div th:if="${error}" class="alert alert-danger alert-dismissible fade show my-3" role="alert">
+            <strong>ERROR!</strong>
+            <p th:text="${error}"></p>
+            <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
 
         </form>
       </div>

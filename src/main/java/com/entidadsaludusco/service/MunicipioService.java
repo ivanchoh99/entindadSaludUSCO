@@ -17,7 +17,7 @@ public class MunicipioService {
     public List<Municipio> lista(){
         return municipioRepository.findAll();
     }
-    public Municipio getMunicipio(Long id){return municipioRepository.findByIdIs(id);}
+    public Municipio getMunicipio(Long id){return municipioRepository.getByIdIs(id);}
 
 
 

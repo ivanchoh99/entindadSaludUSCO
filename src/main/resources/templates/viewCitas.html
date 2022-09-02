@@ -4,11 +4,40 @@
 <head th:insert="fragments :: head">
   <title>ADMIN</title>
 </head>
-<body >
+<body class="vh-100" style="background-color: grey;
+                            overflow: auto;">
 
-<div th:insert="fragments :: nav"></div>
+<nav class="navbar navbar-dark navbar-expand-lg bg-dark" th:fragment="nav" style="padding: 1rem 0.5rem">
+  <div class="container-fluid">
+    <a class="navbar-brand" th:href="@{/index}">USCO Salud</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page" th:href="@{/index}">HOME</a>
+        </li>
+        <li class="nav-item" sec:authorize="hasAuthority('ADMIN')">
+          <a class="nav-link" th:href="@{/viewMedicos}">Listas</a>
+        </li>
+        <li class="nav-item" sec:authorize="hasAnyAuthority('ADMIN','MEDICO','PACIENTE')">
+          <a class="nav-link active" th:href="@{/viewCitas}"
+             style="cursor: not-allowed">Citas</a>
+        </li>
+      </ul>
+      <a th:href="@{/login}" sec:authorize="!isAuthenticated()">
+        Iniciar Sesión
+      </a>
+      <form class="d-flex" role="search"  sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post">
+        <button class="btn btn-outline-danger" type="submit">Salir</button>
+      </form>
+    </div>
+  </div>
+</nav>
 
-<div class="container m-auto">
+
+<div class="h-100 d-flex justify-content-center align-items-center">
   <div class="card my-3">
 
     <div class="card-body">
@@ -21,9 +50,9 @@
           <th scope="col">Municipio</th>
           <th scope="col">Paciente</th>
           <th scope="col">Medico</th>
-          <th scope="col">Recomendaciones</th>
-          <th scope="col">Medicamentos</th>
-          <th scope="col">Eliminar</th>
+          <th sec:authorize="hasAuthority('MEDICO')" scope="col">Reporte</th>
+          <th sec:authorize="hasAuthority('ADMIN')" scope="col">Eliminar</th>
+          <th sec:authorize="hasAuthority('PACIENTE')" scope="col">Reporte</th>
         </tr>
         </thead>
         <tbody>
@@ -34,9 +63,9 @@
           <th th:text="${citas.consultorio.municipio.nombre}"></th>
           <th th:text="${citas.paciente.nombre}+' '+${citas.paciente.apellido}"></th>
           <th th:text="${citas.medico.nombre}+' '+${citas.medico.nombre}"></th>
-          <th><a class="btn btn-primary" th:href="@{/recomendacion}">Recomendacion</a></th>
-          <th><a class="btn btn-primary" th:href="@{/medicamentos}">Medicamentos</a></th>
+          <th sec:authorize="hasAuthority('MEDICO')"><a class="btn btn-primary" th:href="@{'/diagnostico/'+${citas.id}}">Diagnostico</a></th>
           <th sec:authorize="hasAuthority('ADMIN')"><a th:href="@{'/deleteCita/'+${citas.id}}" class="btn btn-danger">Cancelar</a></th>
+          <th sec:authorize="hasAuthority('PACIENTE')" scope="col"><a class="btn btn-primary" th:href="@{'download/'+${citas.id}}">Reporte</a></th>
         </tr>
         </tbody>
       </table>

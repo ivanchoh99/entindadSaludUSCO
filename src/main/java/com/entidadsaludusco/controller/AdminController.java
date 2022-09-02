@@ -1,10 +1,9 @@
 package com.entidadsaludusco.controller;
-
 import com.entidadsaludusco.models.entity.*;
 import com.entidadsaludusco.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -31,35 +30,37 @@ public class AdminController {
     @Autowired
     MunicipioService municipioService;
     @Autowired
-    DepartamentoService departamentoService;
-    @Autowired
     ConsultorioService consultorioService;
 
-    @GetMapping("index")
-    public String index(Authentication auth) {
-        String user = auth.getAuthorities().toString();
-        System.out.println(user);
-        return "index";
-    }
+    private boolean citaPosible = true;
+    private boolean cruceConsultorioBoolean = false;
+    private String cruceConsultorio = "La hora que selecciono para ese consultorio no es posible";
+    private boolean crucePacienteBoolean = false;
+    private String crucePaciente ="Ya tiene alguna cita asignada a esa hora";
+    private boolean cruceMedicoBoolean = false;
+    private String cruceMedico = "El medico que selecciono ya tiene otra cita asignada a esa hora";
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("viewMedicos")
     public ModelAndView viewMedicos() {
         ModelAndView mv = new ModelAndView();
-        List<Usuario> usuariosMedicos = usuarioService.findUsuariosByRolId(2);
+        List<Usuario> usuariosMedicos = usuarioService.findUsuariosByRolId(2L);
         mv.addObject("usuariosMedicos", usuariosMedicos);
         mv.setViewName("Admin/viewMedicos");
         return mv;
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("viewPacientes")
     public ModelAndView viewPacientes() {
         ModelAndView mv = new ModelAndView();
-        List<Usuario> usuariosPacientes = usuarioService.findUsuariosByRolId(3);
+        List<Usuario> usuariosPacientes = usuarioService.findUsuariosByRolId(3L);
         mv.addObject("usuariosPacientes", usuariosPacientes);
         mv.setViewName("Admin/viewPacientes");
         return mv;
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("newConsultorio")
     public ModelAndView newConsultorio() {
         ModelAndView mv = new ModelAndView();
@@ -69,16 +70,19 @@ public class AdminController {
         return mv;
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("newUser")
     public String newUser() {
         return "Admin/newUser";
     }
 
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("newCita/{documento}")
     public ModelAndView creatCita(@PathVariable("documento")Long documento) {
 
         ModelAndView mv = new ModelAndView();
+        mv.addObject("error");
 
         if (!usuarioService.existByDocumento(documento)) {
             mv.setViewName("redirect:/newUser");
@@ -86,18 +90,36 @@ public class AdminController {
 
         String citaFechas = LocalDateTime.now().plusDays(1).toString();
         Usuario paciente = usuarioService.getUsuario(documento);
-        List<Usuario> medicos = usuarioService.findUsuariosByRolId(2);
+        List<Usuario> medicos = usuarioService.findUsuariosByRolId(2L);
         List<Consultorio> consultorios = consultorioService.getConsultorios();
+
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+        String fechaMin = now.format(formatter);
+        mv.addObject("fechaMin",fechaMin.toString());
 
         mv.addObject("citaFechas",citaFechas);
         mv.addObject("consultorios",consultorios);
         mv.addObject("paciente",paciente);
         mv.addObject("medicos",medicos);
         mv.setViewName("Admin/newCita");
+
+        if (!citaPosible){
+            if(cruceConsultorioBoolean){
+                mv.addObject("error",cruceConsultorio);
+            }
+            if (crucePacienteBoolean){
+                mv.addObject("error",crucePaciente);
+            }
+            if (cruceMedicoBoolean){
+                mv.addObject("error",cruceMedico);
+            }
+        }
         return mv;
     }
 
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("creatConsultorio")
     public ModelAndView creatConsultorio(@RequestParam Long municipio) {
         ModelAndView mv = new ModelAndView();
@@ -109,30 +131,75 @@ public class AdminController {
         return mv;
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("creatCita")
-    public ModelAndView creatCita(@RequestParam Long paciente,@RequestParam Long medico,@RequestParam Long consultorio,@RequestParam String fechaHora){
+    public ModelAndView creatCita(@RequestParam Long paciente,
+                                  @RequestParam Long medico,
+                                  @RequestParam Long consultorio,
+                                  @RequestParam String fechaHora){
         ModelAndView mv = new ModelAndView();
+
+        List<Cita> allCitas = citasService.findAll();
 
         if (!usuarioService.existByDocumento(paciente)) {
             mv.setViewName("redirect:/newUser");
         }
 
-        Cita cita =new Cita();
-        LocalDateTime getFechaHora = LocalDateTime.parse(fechaHora);
-        Consultorio getConsultorio = consultorioService.getById(consultorio);
-        Usuario getMedico = usuarioService.getUsuario(medico);
-        Usuario getPaciente = usuarioService.getUsuario(paciente);
-        cita.setConsultorio(getConsultorio);
-        cita.setPaciente(getPaciente);
-        cita.setMedico(getMedico);
-        cita.setFechaHora(getFechaHora);
+        for (Cita cita: allCitas){
 
-        citasService.save(cita);
+            System.out.println(cita.getFechaHora().toString()+"/"+
+                    cita.getConsultorio().getId()+"/"+
+                    cita.getPaciente().getDocumento()+"/"+
+                    cita.getMedico().getDocumento());
+            System.out.println(fechaHora+"/"+
+                    consultorio+"/"+
+                    paciente+"/"+
+                    medico);
 
-        mv.setViewName("redirect:/viewCitas");
+            if (cita.getFechaHora().toString().equals(fechaHora)  && cita.getConsultorio().getId().equals(consultorio)) {
+                System.out.println("ERROR");
+                cruceConsultorioBoolean = true;
+                citaPosible = false;
+                break;
+            }
+            if (cita.getFechaHora().toString().equals(fechaHora) && cita.getPaciente().getDocumento().equals(paciente)){
+                System.out.println("ERROR");
+                crucePacienteBoolean = true;
+                citaPosible = false;
+                break;
+            }
+            if (cita.getFechaHora().toString().equals(fechaHora) && cita.getMedico().getDocumento().equals(medico)){
+                System.out.println("ERROR");
+                cruceMedicoBoolean = true;
+                citaPosible = false;
+                break;
+            }
+        }
+
+        if(citaPosible) {
+            Cita nuevaCita = new Cita();
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+            LocalDateTime formatfechaHora = LocalDateTime.parse(fechaHora, formatter);
+
+            Consultorio getConsultorio = consultorioService.getById(consultorio);
+            Usuario getMedico = usuarioService.getUsuario(medico);
+            Usuario getPaciente = usuarioService.getUsuario(paciente);
+            nuevaCita.setConsultorio(getConsultorio);
+            nuevaCita.setPaciente(getPaciente);
+            nuevaCita.setMedico(getMedico);
+            nuevaCita.setFechaHora(formatfechaHora);
+
+
+            citasService.save(nuevaCita);
+            mv.setViewName("redirect:/viewCitas");
+            return mv;
+        }
+        mv.setViewName("redirect:/newCita/"+paciente);
         return mv;
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("deleteCita/{idCita}")
     public String deleteCita(@PathVariable Long idCita){
         citasService.delet(idCita);
@@ -140,6 +207,7 @@ public class AdminController {
     }
 
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("creatUser")
     public ModelAndView creatUser(@RequestParam Long documento, @RequestParam String password,
                                   @RequestParam String nombre, @RequestParam String apellido,
@@ -154,7 +222,6 @@ public class AdminController {
             mv.addObject("error", "ese usuario ya existe en la base de datos");
             return mv;
         }
-
         if (celular < 1000000000) {
             mv.setViewName("Admin/newUser");
             mv.addObject("error", "ingrese un  celular valido");
@@ -172,15 +239,24 @@ public class AdminController {
         usuario.setApellido(apellido);
         usuario.setDireccion(direccion);
         usuario.setCelular(celular);
+
         Rol rolUser = rolService.findById(rol);
         Set<Rol> roles = new HashSet<>();
         roles.add(rolUser);
         usuario.setRoles(roles);
+
         usuarioService.save(usuario);
         mv.setViewName("redirect:/viewMedicos");
+        if(usuario.getRoles().contains("MEDICO")){
+            mv.setViewName("redirect:/viewMedicos");
+        }
+        if(usuario.getRoles().contains("PACIENTE")){
+            mv.setViewName("redirect:/viewPacientes");
+        }
         return mv;
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("edit/{documento}")
     public ModelAndView edit(@PathVariable("documento") Long documento) {
         ModelAndView mv = new ModelAndView();
@@ -194,6 +270,7 @@ public class AdminController {
         return mv;
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("update")
     public ModelAndView update(@RequestParam Long documento,
                                @RequestParam String direccion,
@@ -201,8 +278,9 @@ public class AdminController {
 
         ModelAndView mv = new ModelAndView();
         Usuario usuario = usuarioService.getUsuario(documento);
+
         if (!usuarioService.existByDocumento(documento)) {
-            return new ModelAndView("redirect:/admin/view");
+            return new ModelAndView("redirect:/viewMedicos");
         }
         if (StringUtils.isBlank(direccion)) {
             mv.setViewName("Admin/edit");
@@ -210,7 +288,6 @@ public class AdminController {
             mv.addObject("error", "direccion no pueden estar vacio");
             return mv;
         }
-
         if (celular < 1000000000) {
             mv.setViewName("Admin/edit");
             mv.addObject("usuario", usuario);

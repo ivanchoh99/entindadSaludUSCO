@@ -18,11 +18,7 @@ public class UsuarioService {
     @Autowired
     UsuarioRepository usuarioRepository;
 
-    public List<Usuario> findUsuariosByRolId(Integer id){return usuarioRepository.findUsuariosByRolId(id);}
-    public List<Usuario> lista(){
-        return usuarioRepository.findAll();
-    }
-
+    public List<Usuario> findUsuariosByRolId(Long id){return usuarioRepository.findUsuariosByRolId(id);}
     public Usuario getUsuario(Long documento){
         return usuarioRepository.findByDocumento(documento);
     }

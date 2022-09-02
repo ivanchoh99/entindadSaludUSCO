@@ -10,7 +10,7 @@ import java.util.List;
 public interface MunicipioRepository extends JpaRepository<Municipio,Long> {
 
     List<Municipio> findAll();
-    Municipio findByIdIs( Long id);
+    Municipio getByIdIs( Long id);
 
 
 

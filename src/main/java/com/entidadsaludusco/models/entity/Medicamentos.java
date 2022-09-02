@@ -10,6 +10,14 @@ public class Medicamentos {
     private Long id;
     private String nombre;
 
+    public Medicamentos(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public Medicamentos() {
+
+    }
+
     public Long getId() {
         return id;
     }
@@ -26,7 +34,4 @@ public class Medicamentos {
         this.nombre = nombre;
     }
 
-    public Medicamentos(String nombre) {
-        this.nombre = nombre;
-    }
 }

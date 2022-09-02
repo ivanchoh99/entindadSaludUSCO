@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<div class="vh-100 d-flex justify-content-center align-items-center">
+<div class="vh-100 d-flex justify-content-center align-items-center bg-dark text-white">
 
 
     <div sec:authorize="isAuthenticated()" class="alert alert-success" role="alert">
@@ -17,16 +17,12 @@
 
     <form th:action="@{/login}" method="post" sec:authorize="!isAuthenticated()" class="w-25">
         <div class="mb-3">
-            <label for="documento" class="form-label">N Documento</label>
+            <label for="documento" class="form-label">N° Documento</label>
             <input type="number" class="form-control" id="documento" name="documento" required autocomplete="off">
         </div>
         <div class="mb-3">
             <label for="password" class="form-label">Contraseña</label>
             <input type="password" class="form-control" id="password" name="password" required>
-        </div>
-        <div class="mb-3 form-check">
-            <input type="checkbox" class="form-check-input" id="checkRememberMe" name="checkRememberMe">
-            <label class="form-check-label" for="checkRememberMe">Remember me</label>
         </div>
         <button th:href="@{/index}" type="submit" class="btn btn-primary">Ingresar</button>
     </form>

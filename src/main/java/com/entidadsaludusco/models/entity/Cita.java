@@ -2,8 +2,8 @@ package com.entidadsaludusco.models.entity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Set;
+import java.util.List;
+
 
 @Entity
 @Table(name = "cita")
@@ -20,20 +20,23 @@ public class Cita {
     private Usuario medico;
     @OneToOne
     private Usuario paciente;
+
+    private String diagnostico;
     private String recomendaciones;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-    name =  "cita_mediacamentos",
+    name =  "cita_medicamentos",
     joinColumns=@JoinColumn(name="cita_id"),
-    inverseJoinColumns=@JoinColumn(name="mediacamento_id"))
-    private Set<Medicamentos> medicamentos;
+    inverseJoinColumns=@JoinColumn(name="medicamento_id"))
+    private List<Medicamentos> medicamentos;
 
-    public Cita(Consultorio consultorio, Usuario medico, Usuario paciente, LocalDateTime fechaHora) {
+    public Cita(Consultorio consultorio, Usuario medico, Usuario paciente, LocalDateTime fechaHora, String diagnostico) {
         this.consultorio = consultorio;
         this.medico = medico;
         this.paciente = paciente;
         this.fechaHora = fechaHora;
+        this.diagnostico = diagnostico;
     }
 
     public Cita() {
@@ -79,11 +82,11 @@ public class Cita {
         this.recomendaciones = recomendaciones;
     }
 
-    public Set<Medicamentos> getMedicamentos() {
+    public List<Medicamentos> getMedicamentos() {
         return medicamentos;
     }
 
-    public void setMedicamentos(Set<Medicamentos> medicamentos) {
+    public void setMedicamentos(List<Medicamentos> medicamentos) {
         this.medicamentos = medicamentos;
     }
 
@@ -93,5 +96,13 @@ public class Cita {
 
     public void setFechaHora(LocalDateTime fechaHora) {
         this.fechaHora = fechaHora;
+    }
+
+    public String getDiagnostico() {
+        return diagnostico;
+    }
+
+    public void setDiagnostico(String diagnostico) {
+        this.diagnostico = diagnostico;
     }
 }

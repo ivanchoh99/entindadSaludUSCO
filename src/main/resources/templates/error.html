@@ -4,12 +4,19 @@
 <head th:insert="fragments :: head">
   <title>Error</title>
 </head>
-<body class="vh-100">
+<body class="vh-100" style="background-color: grey">
 
-<div class="container">
-  <div class="jumbotron">
+
+<div class="d-flex justify-content-center align-items-center" style="height: 100vh">
+  <div style="background-color: white;
+       width: 70%;
+       padding: 1rem;
+       height: fit-content;
+       margin: 5% 0 0 0;
+       border-radius: 1rem ">
     <h1 class="display-4">Pagina no encontrada ERROR:404</h1>
     <p class="lead">Esta pagina no existe en nuestra entidad</p>
+    <a class="btn btn-primary" th:href="@{/index}">HOME</a>
   </div>
 </div>
 

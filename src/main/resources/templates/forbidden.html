@@ -4,15 +4,22 @@
 <head th:insert="fragments :: head">
     <title>Forbidden</title>
 </head>
-<body class="vh-100">
+<body class="vh-100" style="background-color: grey">
 
 
-<div class="container">
-    <div class="jumbotron">
+<div class="d-flex justify-content-center align-items-center" style="height: 100vh">
+    <div style="background-color: white;
+       width: 70%;
+       padding: 1rem;
+       height: fit-content;
+       margin: 5% 0 0 0;
+       border-radius: 1rem ">
         <h1 class="display-4">No autorizado ERROR:403</h1>
-        <p class="lead">Aqui no puedes estar pillin!! LARGO</p>
+        <p class="lead">No tienes permiso de estar aqui .... LARGO!!!</p>
+        <a class="btn btn-primary" th:href="@{/index}">Me voy</a>
     </div>
 </div>
+
 
 <div th:insert="fragments :: scripts"></div>
 </body>

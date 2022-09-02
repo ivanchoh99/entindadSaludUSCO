@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html  xmlns:th="http://www.thymeleaf.org"
+       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:insert="fragments :: head">
-  <title>ADMIN New Consultorio</title>
+  <title>HOME</title>
 </head>
-<body class="vh-100" style="background-color: grey;">
+<body class="vh-100" style="background-color: grey">
 
 <nav class="navbar navbar-dark navbar-expand-lg bg-dark"  style="height: 10vh; position: sticky; top: 0">
   <div class="container-fluid">
@@ -35,29 +35,35 @@
 </nav>
 
 <div class="d-flex justify-content-center align-items-center" style="height: 90vh">
-  <div class="card w-50">
-    <div class="card-header" style="background-color: #e2e2e2">
-      <h5 class="card-title fw-bold">Nuevo Consultorio</h5>
+  <form class="bg-white p-2 rounded" style="width: 50%" method="post" th:action="@{/enviarDiagnostico}">
+
+    <div class="container">  <!--Recomendaciones-->
+      <label for="idCita" class="form-label">N Cita</label>
+      <input readonly type="text" class="form-control-plaintext" id="idCita" name="idCita" th:value="${cita.id}">
     </div>
-      <div class="card-body">
-        <form class=" m-auto w-50" th:action="@{/creatConsultorio}" method="post">
 
-          <div class="my-3">
-            <label class="form-label fw-bold" for="municipio">Municipios</label><br>
-            <input class="form-control" name="municipio" id="municipio" list="municipios" >
+  <div class="mb-3">  <!--Recomendaciones-->
+    <label for="diagnostico" class="form-label">Diagnostigo</label>
+    <textarea required class="form-control" id="diagnostico" name="diagnostico" ows="5" th:field="${cita.diagnostico}"></textarea>
+  </div>
 
-            <datalist id="municipios">
-              <option th:each="municipios: ${municipios}" th:text="${municipios.nombre}" th:value="${municipios.id}"></option>
-            </datalist>
-          </div>
+  <div class="mb-3">  <!--Recomendaciones-->
+    <label for="recomendaciones" class="form-label">Recomendaciones</label>
+    <textarea  required type="text" class="form-control" id="recomendaciones" name="recomendaciones" rows="5" th:field="${cita.recomendaciones}"></textarea>
+  </div>
 
-          <button type="submit" class="btn btn-success btn-block mb-3" >Crear Consultorio</button>
-          <a class="btn btn-primary btn-block mb-3" th:href="@{/viewMedicos}">Regresar</a>
-
-        </form>
-      </div>
+  <div class="container mb-3">   <!--Medicamentos-->
+    <div th:each="medicamentosList: ${medicamentosList}" class="form-check">
+      <label class="form-check-label" id="mendicamento" >
+      <input class="form-check-input" type="checkbox" name="medicamento" id="medicamento"
+             th:value="${medicamentosList.id}"
+             th:text="${medicamentosList.nombre}">
+      </label>
     </div>
   </div>
+    <button type="submit" class="btn btn-success">Enviar</button>
+  </form>
+</div>
 <div th:insert="fragments :: scripts"></div>
 </body>
 </html>
